@@ -1,6 +1,7 @@
 package com.example.dnap_finalproject.screens
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.datastore.generated.model.User
 
 @Composable
 fun RegisterScreen (
@@ -28,10 +31,6 @@ fun RegisterScreen (
 ) {
     var nombre by remember { mutableStateOf("") }
     var apellido by remember { mutableStateOf("") }
-    var genero by remember { mutableStateOf("") }
-    var fechaNacimiento by remember { mutableStateOf("") }
-    var telefono by remember { mutableStateOf("") }
-    var direccion by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -92,6 +91,17 @@ fun RegisterScreen (
 
         Button(
             onClick = {
+                val item: User = User.builder()
+                    .nombres(nombre)
+                    .apellidos(apellido)
+                    .email(email)
+                    .password(password)
+                    .build()
+                Amplify.DataStore.save(
+                    item,
+                    { success -> Log.i("Amplify", "Saved item: " + success.item().nombres) },
+                    { error -> Log.e("Amplify", "Could not save item to DataStore", error) }
+                )
                 navController?.navigate("login_screen")
             },
             modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(4.dp)).padding(10.dp)

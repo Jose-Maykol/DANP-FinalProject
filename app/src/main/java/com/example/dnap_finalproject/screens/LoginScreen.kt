@@ -1,6 +1,7 @@
 package com.example.dnap_finalproject.screens
 
-import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -26,7 +27,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.model.query.Where
+import com.amplifyframework.datastore.generated.model.User
 
 @Composable
 fun LoginScreen(
@@ -75,7 +78,37 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                navController?.navigate("home_screen")
+                Amplify.DataStore.query(
+                    User::class.java,
+                    Where.matches(User.EMAIL.eq(email)),
+                    { users ->
+                        if (!users.hasNext()) {
+                            Handler(Looper.getMainLooper()).post {
+                                Toast.makeText(context, "Usuario no encontrado", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        while (users.hasNext()) {
+                            val user = users.next()
+                            Log.i("USER", "Email: " + user.email)
+                            Log.i("USER", "Password: " + user.password)
+
+                            if (user.password.equals(password)) {
+                                Handler(Looper.getMainLooper()).post {
+                                    Toast.makeText(context, "Ingresando", Toast.LENGTH_SHORT).show()
+                                    navController?.navigate("home_screen")
+                                }
+                            } else {
+                                Handler(Looper.getMainLooper()).post {
+                                    Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+                        }
+                    },
+                    { failure -> Log.e("Tutorial", "Could not query DataStore", failure) }
+                )
+                //navController?.navigate("home_screen")
             },
             modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(4.dp))
         ) {
@@ -87,7 +120,7 @@ fun LoginScreen(
         TextButton(
             onClick = {
                 navController?.navigate("register_screen")
-            },
+                      },
             modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(4.dp)).background(color = Color.Transparent)
         ) {
             Text(
