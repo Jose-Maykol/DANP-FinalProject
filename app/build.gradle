@@ -64,7 +64,10 @@ dependencies {
     implementation 'com.amplifyframework:core:2.8.4'
     implementation 'com.amplifyframework:aws-api:2.0.0'
     implementation 'com.amplifyframework:aws-datastore:2.0.0'
-
+    implementation 'software.amazon.awssdk.crt:aws-crt-android:0.16.14'
+    implementation("software.amazon.awssdk.iotdevicesdk:aws-iot-device-sdk:1.9.3") {
+        exclude group: "software.amazon.awssdk.crt"
+    }
     // Support for Java 8 features
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
     testImplementation 'junit:junit:4.13.2'

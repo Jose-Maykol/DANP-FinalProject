@@ -1,5 +1,6 @@
 package com.example.dnap_finalproject.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -9,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,12 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ToggleButton() {
-
-    var isOn by remember { mutableStateOf(false) }
+fun ToggleButton(
+    onButtonClick: () -> Unit,
+    isOn: Boolean,
+    messageOn: String = "{ \"message\": \"apagar_led\" }",
+    messageOff: String = "{ \"message\": \"encender_led\" }"
+) {
 
     IconButton(
-        onClick = { isOn = !isOn },
+        onClick = {onButtonClick()},
         modifier = Modifier
             .size(60.dp)
             .clip(CircleShape)
@@ -35,5 +40,11 @@ fun ToggleButton() {
             contentDescription = "Toggle Button",
             tint = Color.White
         )
+    }
+
+    LaunchedEffect(isOn) {
+        val message = if (isOn) messageOn else messageOff
+        Log.d("ToggleButton", "Sending MQTT message: $message")
+        onButtonClick()
     }
 }

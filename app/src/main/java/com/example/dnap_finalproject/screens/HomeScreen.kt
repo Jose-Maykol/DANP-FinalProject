@@ -11,22 +11,34 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.dnap_finalproject.components.Indicator
 import com.example.dnap_finalproject.components.ToggleButton
+import com.example.dnap_finalproject.mqtt.MqttConnection
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     navController: NavHostController
 ) {
+
+    val context = LocalContext.current
+    val mqttConnection = remember { MqttConnection(context) }
+    var isOn by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,7 +66,15 @@ fun HomeScreen(
         {
             Indicator()
             Spacer(modifier = Modifier.height(16.dp))
-            ToggleButton()
+            ToggleButton(
+                onButtonClick = {
+                    val message = if (isOn) "{ \"message\": \"apagar_led\" }" else "{ \"message\": \"encender_led\" }"
+                    val topic = "esp32/sub"
+                    val qos = 1
+                    mqttConnection.publishMessage(message, topic, qos)
+                },
+                isOn = isOn
+            )
         }
 
     }
