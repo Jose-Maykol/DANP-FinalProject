@@ -68,6 +68,8 @@ dependencies {
     implementation("software.amazon.awssdk.iotdevicesdk:aws-iot-device-sdk:1.9.3") {
         exclude group: "software.amazon.awssdk.crt"
     }
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07"
+    implementation "androidx.compose.runtime:runtime-livedata:1.0.4"
     // Support for Java 8 features
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
     testImplementation 'junit:junit:4.13.2'

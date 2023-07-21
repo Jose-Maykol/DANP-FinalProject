@@ -18,15 +18,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.dnap_finalproject.components.Indicator
 import com.example.dnap_finalproject.components.ToggleButton
 import com.example.dnap_finalproject.mqtt.MqttConnection
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dnap_finalproject.components.Indicator
+import com.example.dnap_finalproject.data.SensorDataViewModel
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -38,7 +39,12 @@ fun HomeScreen(
     val context = LocalContext.current
     val mqttConnection = remember { MqttConnection(context) }
     var isOn by remember { mutableStateOf(false) }
+    val sensorDataViewModel: SensorDataViewModel = viewModel()
+    val temperature = sensorDataViewModel.sensorDataTemperature.temperature.value
 
+    LaunchedEffect(Unit) {
+        mqttConnection.subscribeToTopic("esp32/pub", 1, sensorDataViewModel.sensorDataTemperature)
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,7 +70,9 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         )
         {
-            Indicator()
+            //val temperature = mqttObserver.temperature
+
+            Indicator(indicatorValue = temperature.toInt() )
             Spacer(modifier = Modifier.height(16.dp))
             ToggleButton(
                 onButtonClick = {
@@ -72,6 +80,7 @@ fun HomeScreen(
                     val topic = "esp32/sub"
                     val qos = 1
                     mqttConnection.publishMessage(message, topic, qos)
+                    isOn = !isOn
                 },
                 isOn = isOn
             )

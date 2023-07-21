@@ -2,6 +2,8 @@ package com.example.dnap_finalproject.mqtt
 
 import android.content.Context
 import android.util.Log
+import com.example.dnap_finalproject.data.SensorDataTemperature
+import org.json.JSONObject
 import software.amazon.awssdk.crt.CRT
 import software.amazon.awssdk.crt.mqtt.MqttClientConnection
 import software.amazon.awssdk.crt.mqtt.MqttClientConnectionEvents
@@ -9,6 +11,7 @@ import software.amazon.awssdk.crt.mqtt.MqttMessage
 import software.amazon.awssdk.crt.mqtt.QualityOfService
 import software.amazon.awssdk.iot.AwsIotMqttConnectionBuilder
 import java.io.FileOutputStream
+import java.nio.charset.StandardCharsets
 
 class MqttConnection(private val context: Context) {
     private val endPoint = "a33924bzxw6tas-ats.iot.us-east-2.amazonaws.com"
@@ -80,11 +83,21 @@ class MqttConnection(private val context: Context) {
         }
     }
 
-    fun subscribeToTopic(topic: String, qos: Int) {
+    fun subscribeToTopic(topic: String, qos: Int, sensorDataTemperature: SensorDataTemperature) {
         val subscribeFuture = mqttClientConnection.subscribe(topic, QualityOfService.AT_LEAST_ONCE)
         subscribeFuture.whenComplete { _, throwable ->
             if (throwable == null) {
                 Log.i("MqttConnection", "Subscribed to topic: $topic")
+                mqttClientConnection.subscribe("esp32/pub", QualityOfService.AT_LEAST_ONCE){ message ->
+                        val payload = String(message.payload, StandardCharsets.UTF_8)
+                        Log.i("MqttConnection", "Received message: $payload")
+                        // Parsear JSON y obtener los valores de humedad y temperatura
+                        val json = JSONObject(payload)
+                        val humidity = json.getDouble("humidity")
+                        val temperature = json.getDouble("temperature")
+                        // Actualizar los valores de humedad y temperatura
+                        sensorDataTemperature.updateTemperature(temperature)
+                }
             } else {
                 Log.e("MqttConnection", "Failed to subscribe to topic: $topic", throwable)
             }

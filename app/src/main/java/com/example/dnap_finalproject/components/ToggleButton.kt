@@ -19,32 +19,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ToggleButton(
     onButtonClick: () -> Unit,
-    isOn: Boolean,
-    messageOn: String = "{ \"message\": \"apagar_led\" }",
-    messageOff: String = "{ \"message\": \"encender_led\" }"
+    isOn: Boolean
 ) {
 
+    val toggleState = remember { mutableStateOf(isOn) }
+
     IconButton(
-        onClick = {onButtonClick()},
+        onClick = {
+            toggleState.value = !toggleState.value
+            onButtonClick()
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(2000)
+            }
+        },
         modifier = Modifier
             .size(60.dp)
             .clip(CircleShape)
-            .background(if (isOn) MaterialTheme.colors.primary else Color.Gray),
+            .background(if (toggleState.value) MaterialTheme.colors.primary else Color.Gray),
     ) {
         Icon(
-            imageVector = if (isOn) Icons.Default.Check else Icons.Default.Check,
+            imageVector = if (toggleState.value) Icons.Default.Check else Icons.Default.Check,
             contentDescription = "Toggle Button",
             tint = Color.White
         )
-    }
-
-    LaunchedEffect(isOn) {
-        val message = if (isOn) messageOn else messageOff
-        Log.d("ToggleButton", "Sending MQTT message: $message")
-        onButtonClick()
     }
 }
