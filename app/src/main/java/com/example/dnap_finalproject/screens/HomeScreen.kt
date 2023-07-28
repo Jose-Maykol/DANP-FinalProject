@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dnap_finalproject.components.Indicator
+import com.example.dnap_finalproject.components.LineChart
 import com.example.dnap_finalproject.data.SensorDataViewModel
 
 
@@ -50,13 +51,13 @@ fun HomeScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "",
+                        text = "Control de temperatura",
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
                     ) },
                 backgroundColor = Color.Transparent,
-                contentColor = Color.White,
+                contentColor = MaterialTheme.colors.primary,
                 modifier = Modifier.padding(top = 32.dp),
                 elevation = 0.dp,
             )
@@ -66,13 +67,17 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(vertical = 16.dp, horizontal = 32.dp),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         )
         {
             //val temperature = mqttObserver.temperature
 
             Indicator(indicatorValue = temperature.toInt() )
+            Spacer(modifier = Modifier.height(16.dp))
+            LineChart(yPoints = listOf(
+                219f, 22f, 23f, 220f, 130f, 20f, 50f, 100f, 201f, 1f
+            ),)
             Spacer(modifier = Modifier.height(16.dp))
             ToggleButton(
                 onButtonClick = {

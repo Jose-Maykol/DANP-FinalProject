@@ -84,11 +84,11 @@ class MqttConnection(private val context: Context) {
     }
 
     fun subscribeToTopic(topic: String, qos: Int, sensorDataTemperature: SensorDataTemperature) {
-        val subscribeFuture = mqttClientConnection.subscribe(topic, QualityOfService.AT_LEAST_ONCE)
+        val subscribeFuture = mqttClientConnection.subscribe(topic, QualityOfService.AT_MOST_ONCE)
         subscribeFuture.whenComplete { _, throwable ->
             if (throwable == null) {
                 Log.i("MqttConnection", "Subscribed to topic: $topic")
-                mqttClientConnection.subscribe("esp32/pub", QualityOfService.AT_LEAST_ONCE){ message ->
+                mqttClientConnection.subscribe("esp32/pub", QualityOfService.AT_MOST_ONCE){ message ->
                         val payload = String(message.payload, StandardCharsets.UTF_8)
                         Log.i("MqttConnection", "Received message: $payload")
                         // Parsear JSON y obtener los valores de humedad y temperatura
