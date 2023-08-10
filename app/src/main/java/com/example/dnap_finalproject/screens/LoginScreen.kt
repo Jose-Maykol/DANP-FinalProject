@@ -30,6 +30,11 @@ import androidx.navigation.NavHostController
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.model.query.Where
 import com.amplifyframework.datastore.generated.model.User
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.example.dnap_finalproject.R
 
 @Composable
 fun LoginScreen(
@@ -37,8 +42,20 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
     val context = LocalContext.current
+
+    val sharedPreferences = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+    val userEmail = sharedPreferences.getString("email", null)
+
+    if (userEmail != null) {
+        if (navController != null) {
+            navController.navigate("home_screen") {
+                popUpTo(navController.graph.startDestinationId)
+                launchSingleTop = true
+            }
+        }
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -46,8 +63,15 @@ fun LoginScreen(
             .padding(vertical = 16.dp, horizontal = 32.dp),
         verticalArrangement = Arrangement.Center
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.icon_app),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center)
+        )
         Text(
-            text = "Bienvenido !!!",
+            text = "Bienvenido a MediSense !!!",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.fillMaxWidth().wrapContentSize(Alignment.Center)
@@ -96,6 +120,10 @@ fun LoginScreen(
                             if (user.password.equals(password)) {
                                 Handler(Looper.getMainLooper()).post {
                                     Toast.makeText(context, "Ingresando", Toast.LENGTH_SHORT).show()
+                                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                                    editor.putString("email", email)
+                                    editor.putString("name", user.nombres )
+                                    editor.apply()
                                     navController?.navigate("home_screen")
                                 }
                             } else {

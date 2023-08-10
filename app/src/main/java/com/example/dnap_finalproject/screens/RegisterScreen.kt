@@ -3,6 +3,7 @@ package com.example.dnap_finalproject.screens
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -24,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.datastore.generated.model.User
+import com.example.dnap_finalproject.R
 
 @Composable
 fun RegisterScreen (
@@ -42,20 +45,39 @@ fun RegisterScreen (
             .padding(vertical = 16.dp, horizontal = 32.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Registro de usuario",
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth().wrapContentSize(Alignment.Center),
-            fontSize = 24.sp,
-        )
-
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+                .wrapContentSize(Alignment.Center))
+        {
+            Image(
+                painter = painterResource(id = R.drawable.icon_app),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .width(70.dp)
+                    .height(70.dp)
+                    .wrapContentSize(Alignment.Center)
+            )
+            Text(
+                text = "Registro de usuario",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                fontSize = 24.sp,
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = nombre,
             onValueChange = { nombre = it },
             label = { Text("Nombre") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -64,7 +86,9 @@ fun RegisterScreen (
             value = apellido,
             onValueChange = { apellido = it },
             label = { Text("Apellido") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -73,7 +97,9 @@ fun RegisterScreen (
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -82,7 +108,9 @@ fun RegisterScreen (
             value = password,
             onValueChange = { password = it },
             label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
@@ -104,7 +132,10 @@ fun RegisterScreen (
                 )
                 navController?.navigate("login_screen")
             },
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(4.dp)).padding(10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(4.dp))
+                .padding(10.dp)
         ) {
             Text(text = "Registrar")
         }

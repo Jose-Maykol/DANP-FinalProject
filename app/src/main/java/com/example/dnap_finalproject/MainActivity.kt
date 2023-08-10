@@ -39,10 +39,6 @@ class MainActivity : ComponentActivity() {
             Log.e("Amplify", "Could not initialize Amplify", e)
         }
 
-        window.statusBarColor = Color.Transparent.toArgb()
-        window.navigationBarColor = Color.Black.toArgb()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
         super.onCreate(savedInstanceState)
         setContent {
             DNAPFinalProjectTheme {

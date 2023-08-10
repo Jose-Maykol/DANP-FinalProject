@@ -6,4 +6,6 @@ sealed class AppScreens (
     object LoginScreen: AppScreens("login_screen")
     object HomeScreen: AppScreens("home_screen")
     object RegisterScreen: AppScreens("register_screen")
+    object HumidityScreen: AppScreens("humidity_screen")
+    object TemperatureScreen: AppScreens("temperature_screen")
 }
