@@ -2,6 +2,8 @@ package com.example.dnap_finalproject.mqtt
 
 import android.content.Context
 import android.util.Log
+import com.amplifyframework.core.Amplify
+import com.amplifyframework.datastore.generated.model.IoTData
 import com.example.dnap_finalproject.data.SensorDataTemperature
 import org.json.JSONObject
 import software.amazon.awssdk.crt.CRT
@@ -93,8 +95,22 @@ class MqttConnection(private val context: Context) {
                         Log.i("MqttConnection", "Received message: $payload")
                         // Parsear JSON y obtener los valores de humedad y temperatura
                         val json = JSONObject(payload)
+                        val datetime = json.getString("datetime")
                         val humidity = json.getDouble("humidity")
                         val temperature = json.getDouble("temperature")
+
+                        val item: IoTData = IoTData.builder()
+                            .datetime(datetime)
+                            .humidity(humidity.toString())
+                            .temperature(temperature.toString())
+                            .build()
+
+                        Amplify.DataStore.save(
+                            item,
+                            { success -> Log.i("Amplify", "Saved item: " + success.item().datetime) },
+                            { error -> Log.e("Amplify", "Could not save item to DataStore", error) }
+                        )
+
                         // Actualizar los valores de humedad y temperatura
                         sensorDataTemperature.updateTemperature(temperature)
                 }

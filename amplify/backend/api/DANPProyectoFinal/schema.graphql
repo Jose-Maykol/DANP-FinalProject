@@ -1,3 +1,10 @@
+type IoTData @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  datetime: String
+  humidity: String
+  temperature: String
+}
+
 type User @model @auth(rules: [{allow: public}]) {
   id: ID!
   nombres: String
@@ -5,3 +12,4 @@ type User @model @auth(rules: [{allow: public}]) {
   email: String
   password: String
 }
+ 
